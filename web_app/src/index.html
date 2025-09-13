@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bahasa Isyarat Display</title>
+</head>
+<body>
+    <h1>Bahasa Isyarat Video</h1>
+    <div id="video-container"></div>
+
+    <script>
+        // Fungsi untuk mendapatkan video dari server
+        function fetchSignLanguageVideo() {
+            fetch('http://localhost:5000/get_sign_language_video')
+                .then(response => response.json())
+                .then(data => {
+                    const videoContainer = document.getElementById('video-container');
+                    videoContainer.innerHTML = ''; // Clear previous videos
+                    if (data.videos && data.videos.length > 0) {
+                        data.videos.forEach(videoPath => {
+                            const videoElement = document.createElement('video');
+                            videoElement.src = `http://localhost:5000/video/${videoPath.split("\\").pop()}`;
+                            videoElement.controls = true;
+                            videoElement.autoplay = true;
+                            videoElement.style.maxWidth = '100%';
+                            videoElement.style.height = 'auto';
+                            videoContainer.appendChild(videoElement);
+                        });
+                    } else {
+                        videoContainer.innerHTML = 'Tidak ada video ditemukan untuk teks ini.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching video:', error);
+                });
+        }
+
+        // Ambil video secara berkala (misalnya, setiap detik)
+        setInterval(fetchSignLanguageVideo, 1000);
+    </script>
+</body>
+</html>
